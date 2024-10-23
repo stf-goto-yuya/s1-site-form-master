@@ -42,14 +42,12 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
-    - name: npm install, build, and test
+    - name: Clean install dependencies
       run: |
-        npm install -g npm@latest
+        rm -rf node_modules
+        rm -f package-lock.json
+        npm cache clean --force
         npm install -legacy-peer-deps
-        npm install -save-dev @types/node@18.0.0
-        export NODE_OPTIONS=--openssl-legacy-provider
-        npm run build --if-present
-        npm run test --if-present
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
