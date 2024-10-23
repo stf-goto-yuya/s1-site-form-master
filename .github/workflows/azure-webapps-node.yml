@@ -25,7 +25,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: s1-site-form-master    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '20.x'                # set this to the node version to use
+  NODE_VERSION: '18.x'                # set this to the node version to use
 
 permissions:
   contents: read
@@ -47,6 +47,7 @@ jobs:
         npm install -g npm@latest
         npm install -legacy-peer-deps
         npm install -save-dev @types/node@18.0.0
+        export NODE_OPTIONS=--openssl-legacy-provider
         npm run build --if-present
         npm run test --if-present
 
@@ -55,6 +56,14 @@ jobs:
       with:
         name: node-app
         path: .
+
+    - name: Update dependencies
+      run: |
+        npm update
+        npm audit fix --force
+
+    - name: Update caniuse-lite
+      run: npx browserslist@latest --update-db
 
   deploy:
     permissions:
